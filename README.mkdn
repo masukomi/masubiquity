@@ -1,0 +1,16 @@
+## Contents ##
+
+A Collection of small [Ubiquity](http://labs.mozilla.com/projects/ubiquity/) commands written by Masukomi.
+
+### tweeted ###
+
+Just type tweeted and wait a second while it runs off to [Twitter](http://www.twitter.com) and grabs the latest tweets from your friends. By default it grabs the 6 most recent ones. But you can specify more, or less by just giving it a number. Ex.: tweeted 5 
+
+Obviously, you'll need a twitter account.
+
+![tweeted](http://www.masukomi.org/projects/ubiquity/masubiquity/screenshots/tweeted.png "Screenshot of tweeted command")
+
+
+### hyperdictionary ###
+
+Need to look up a word? just type dict followed by the word you want to look up and this command will open up the definition page on [Hyperdictionary.com](http://www.hyperdictionary.com). Alternately synonyms are hdict, dictionary, and hyperdictionary.
