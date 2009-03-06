@@ -2,6 +2,10 @@
 
 A Collection of small [Ubiquity](http://labs.mozilla.com/projects/ubiquity/) commands written by Masukomi.
 
+### todo ### 
+
+A simple GTD style todolist manager. 
+
 ### tweeted ###
 
 Just type tweeted and wait a second while it runs off to [Twitter](http://www.twitter.com) and grabs the latest tweets from your friends. By default it grabs the 6 most recent ones. But you can specify more, or less by just giving it a number. Ex.: tweeted 5 
