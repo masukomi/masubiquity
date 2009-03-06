@@ -18,13 +18,13 @@ CmdUtils.CreateCommand({
 	name: "todo",
 	synonyms: ["moo"],
 	icon: "http://example.com/example.png",
-	homepage: "http://example.com/",
+	homepage: "http://www.moomarks.com/",
 	author: { name: "masukomi", email: "masukomi@masukomi.org"},
 	license: "MIT",
 	description: "",
 	help: "<dl>\
 <dt style='font-style:italic; border-bottom: solid 1px #cccccc;'>todo</dt><dd>displays your list of todo items</dd> \
-<dt style='font-style:italic; border-bottom: solid 1px #cccccc;'>todo add &lt;message&gt;<dd>adds an item to your todo list.<br />Example: todo @home pick up groceries.</dd> \
+<dt style='font-style:italic; border-bottom: solid 1px #cccccc;'>todo add &lt;message&gt;<dd>adds an item to your todo list.<br />Example: todo @home pick up groceries.<br />Note: if you just say todo and start typing something without any recognized keywords at the beginning, it'll assume you want to add something.</dd> \
 <dt style='font-style:italic; border-bottom: solid 1px #cccccc;'>todo finish OR done &lt;item number&gt;</dt> \
 	<dd>removes the item with the corresponding number from your list.<br />Example: todo finish 4</dd> \
 <dt style='font-style:italic; border-bottom: solid 1px #cccccc;'>todo set &lt;at word&gt; &lt;color&gt;</dt> \
@@ -148,6 +148,11 @@ CmdUtils.CreateCommand({
 				}
 			} else if (/clear/i.test(firstWord)){
 				response.command = 'clear';
+			} else if (/\S+/.test(paramsS)){
+				// i frequently find myself trying to add things without 
+				// typing "add" first
+				response.command = 'add';
+				response.payload = paramsS;
 			}
 		}
 		
