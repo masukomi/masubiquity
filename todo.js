@@ -12,7 +12,7 @@ var moo_template = "\
 <div style='overflow: auto; height: 450px; width:475;font-size:10pt;'> \
 {for entry in entries}{if entry != null} \
   <div style='width: 100%;{if parseInt(entry_index) % 2 == 0}background: #444444;{else}background: #555555;{/if}'><span style='color: #FF9966;'>${parseInt(entry_index) +1 })</span> ${entry}</div> \
-{/if}{/for}</div>"; 
+{/if}{/for}<p>See <a style='color:#9999FF;' href='chrome://ubiquity/content/cmdlist.html'>the commands page</a> for usage.</p></div>"; 
 
 CmdUtils.CreateCommand({
 	name: "todo",
