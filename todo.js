@@ -10,9 +10,9 @@ var store = Application.storage;
 var moo_template = "\
 <div style='font-weight: bold;'>Your Todo list has ${entries.length} item{if entries.length != 1}s{/if}:</div> \
 <div style='overflow: auto; height: 450px; width:475;font-size:10pt;'> \
-{for entry in entries} \
+{for entry in entries}{if entry != null} \
   <div style='width: 100%;{if parseInt(entry_index) % 2 == 0}background: #444444;{else}background: #555555;{/if}'><span style='color: #FF9966;'>${parseInt(entry_index) +1 })</span> ${entry}</div> \
-{/for}</div>"; 
+{/if}{/for}</div>"; 
 
 CmdUtils.CreateCommand({
 	name: "todo",
@@ -27,6 +27,8 @@ CmdUtils.CreateCommand({
 <dt style='font-style:italic; border-bottom: solid 1px #cccccc;'>todo add &lt;message&gt;<dd>adds an item to your todo list.<br />Example: todo @home pick up groceries.<br />Note: if you just say todo and start typing something without any recognized keywords at the beginning, it'll assume you want to add something.</dd> \
 <dt style='font-style:italic; border-bottom: solid 1px #cccccc;'>todo finish OR done &lt;item number&gt;</dt> \
 	<dd>removes the item with the corresponding number from your list.<br />Example: todo finish 4</dd> \
+<dt style='font-style:italic; border-bottom: solid 1px #cccccc;'>todo filter &lt;@word&gt;</dt> \
+	<dd>Filters your list to just entries with a specific \"at word\"<br />Example: todo filter @work</dd> \
 <dt style='font-style:italic; border-bottom: solid 1px #cccccc;'>todo set &lt;at word&gt; &lt;color&gt;</dt> \
 	<dd>Set the highlight color for a specific at word. <nobr>Example: todo set @work #ff3333</nobr><br />Check out the <a style='color:#9999FF;' href='http://www.visibone.com/colorlab/'>Visibone Color Lab</a> for colors.</dd> \
 </dl>",
@@ -34,9 +36,14 @@ CmdUtils.CreateCommand({
 	preview: function( pblock, input ) {
 		var params = this.parseParams(input);
 		var data =this.getList();
+		
 		if (data.length  > 0){
 			for (var i =0; i < data.length; i++){
-				data[i] = this.highlightAtWords(data[i]);
+				if (params.command == 'filter' && params.payload != null){
+					data[i] = this.highlightAtWords(data[i], params.payload);
+				} else {
+					data[i] = this.highlightAtWords(data[i], null);
+				}
 			}
 			
 			pblock.innerHTML = CmdUtils.renderTemplate(moo_template, {'entries': data});
@@ -94,9 +101,16 @@ CmdUtils.CreateCommand({
 			}
 		}
 	},
-	highlightAtWords: function(text){
+	highlightAtWords: function(text, filter){
+		var undefined_var;
+		if (filter === undefined_var){
+			filter = null;
+		}
 		var atWord = text.replace(/^\s*@(\w+)(\s+.*|$)/, "$1"); 
 		if (atWord != text){
+			if (filter != null && filter != atWord){
+				return null;
+			}
 			var prefs =  this.getPrefs();
 			var color = prefs['colors'][atWord];
 			var undefined_var;
@@ -105,6 +119,9 @@ CmdUtils.CreateCommand({
 			}
 			var replacement =  text.replace(/^\s*\@(\w+)(\s+.*?|$)/, "<span style='color: " + color + ";'>@$1</span>" + "$2");
 			return replacement;
+		} 
+		if (filter != null){
+			return null;
 		}
 		return text;
 	},
@@ -148,6 +165,14 @@ CmdUtils.CreateCommand({
 				}
 			} else if (/clear/i.test(firstWord)){
 				response.command = 'clear';
+			} else if (/filter/i.test(firstWord)){
+				response.command = 'filter'
+				if (/^\s*filter\s+@*\w+.*?$/i.test(paramsS)){
+					response.payload = paramsS.replace(/^\s*filter\s+@*(\w+).*?$/, "$1");
+				} else{
+					response.payload = null;
+				}
+				
 			} else if (/\S+/.test(paramsS)){
 				// i frequently find myself trying to add things without 
 				// typing "add" first
