@@ -33,7 +33,7 @@ CmdUtils.CreateCommand({
 			for (var i =0; i < recentTweets.length; i++){
 				var tweet = recentTweets[i]; // a hash
 				tweet.created_at = tweet.created_at.replace(/ \+.*/, ""); // chop off the excess precision
-				tweet.text = tweet.text.replace(/(https*:\/\/.*?)(\s|$)/g, "<a href='$1'>$1</a>"); //make the urls into links
+				tweet.text = tweet.text.replace(/(https*:\/\/.*?)(\s|$)/g, "<a href='$1'>$1</a>").replace(/@(\w+)/, "<a href='http://twitter.com/$1'>@$1</a>"); //make the urls into links
 				var rendered = CmdUtils.renderTemplate(tweetplate, {"tweet":tweet});
 				//CmdUtils.log(rendered);
 				previewHTML += rendered.replace(/<a href/g, "<a style='color:#CCCCFF;' href");
