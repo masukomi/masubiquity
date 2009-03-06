@@ -17,11 +17,11 @@ var moo_template = "\
 CmdUtils.CreateCommand({
 	name: "todo",
 	synonyms: ["moo"],
-	icon: "http://example.com/example.png",
+	icon: "http://www.moomarks.com/favicon.ico",
 	homepage: "http://www.moomarks.com/",
 	author: { name: "masukomi", email: "masukomi@masukomi.org"},
 	license: "MIT",
-	description: "",
+	description: "MooMarks GTD style todo list manager.",
 	help: "<dl>\
 <dt style='font-style:italic; border-bottom: solid 1px #cccccc;'>todo</dt><dd>displays your list of todo items</dd> \
 <dt style='font-style:italic; border-bottom: solid 1px #cccccc;'>todo add &lt;message&gt;<dd>adds an item to your todo list.<br />Example: todo @home pick up groceries.<br />Note: if you just say todo and start typing something without any recognized keywords at the beginning, it'll assume you want to add something.</dd> \
@@ -90,9 +90,9 @@ CmdUtils.CreateCommand({
 				var atWord = params.payload.atWord;
 				if (atWord != null && color != null){
 					if (/^#\w{3,6}$/.test(color)){
-						var prefs = this.getPrefs();
+						var prefs = getPrefs();
 						prefs['colors'][atWord] = color;
-						this.setPrefs(prefs);
+						setPrefs(prefs);
 						displayMessage("@"+atWord + " will now be " + color);
 					} else {
 						displayMessage("Please enter a hex color\nlike #FF3333");
@@ -111,7 +111,7 @@ CmdUtils.CreateCommand({
 			if (filter != null && filter != atWord){
 				return null;
 			}
-			var prefs =  this.getPrefs();
+			var prefs =  getPrefs();
 			var color = prefs['colors'][atWord];
 			var undefined_var;
 			if (color === undefined_var){
@@ -200,26 +200,91 @@ CmdUtils.CreateCommand({
 		store.set(MOO_LIST, JSONstring.make(list));
 	},
 
-	hasPrefs: function () {
-		return store.has(MOO_PREFS);
-	},
-
-	getPrefs: function () {
-		var defaultPrefs = '{"colors":{"default":"#9999ff"}}';
-		if (this.hasPrefs()) {
-			return JSONstring.toObject(store.get(MOO_PREFS, defaultPrefs));
-		}else{
-			return JSONstring.toObject(defaultPrefs);
-		}
-	},
-
-	setPrefs: function (prefs){
-		store.set(MOO_PREFS, JSONstring.make(prefs));
-	}
+	
 	
 
 	
 });
+
+
+var hasPrefs = function () {
+		return store.has(MOO_PREFS);
+	};
+
+var getPrefs = function () {
+		var defaultPrefs = '{"colors":{"default":"#9999ff"}}';
+		if (hasPrefs()) {
+			return JSONstring.toObject(store.get(MOO_PREFS, defaultPrefs));
+		}else{
+			return JSONstring.toObject(defaultPrefs);
+		}
+	};
+
+var setPrefs = function (prefs){
+		store.set(MOO_PREFS, JSONstring.make(prefs));
+	};
+
+// END todo
+///////////////////////////////////////
+//BEGIN todo-color
+
+/* This is a template command */
+CmdUtils.CreateCommand({
+	name: "todo-color",
+	synonyms: ["moo-color"],
+	icon: "http://www.moomarks.com/favicon.ico",
+	homepage: "http://www.moomarks.com/",
+	author: { name: "masukomi", email: "masukomi@masukomi.org"},
+	license: "MIT",
+	description: "Sets the colors of your \"at words\" for MooMarks",
+	help: "Simply enter an \"at word\" and a color like so: \"todo-color @foo as #ff333333\"",
+	takes: {"at word": noun_arb_text},
+	modifiers: {"as": noun_arb_text},
+	
+	
+	preview: function( pblock, input, mods ) {
+		var params = this.parseParams(input, mods);
+		var template = "{if params.atWord != null}{if params.color != null}<span style='color: ${params.color}'>{/if}\
+@${params.atWord}</span> will be colored with&nbsp; {if params.color != null}<span style='color: ${params.color}'>${params.color}</span>\
+{else}(Enter a hex color.){/if} \
+{/if}<p>Usage: Example: @work as #ff3333<br />Check out the \
+<a style='color:#9999FF;' href='http://www.visibone.com/colorlab/'>Visibone Color Lab</a> for colors.</p>";
+		pblock.innerHTML = CmdUtils.renderTemplate(template, {"params": params});
+	},
+	execute: function(input, mods) {
+		CmdUtils.log("in execute");
+		var params = this.parseParams(input, mods);
+		if (params.atWord != null  && params.color != null){
+			var prefs = getPrefs();
+			prefs['colors'][params.atWord] = params.color;
+			setPrefs(prefs);
+			displayMessage("@"+params.atWord + " will now be " + params.color);
+		} else {
+			displayMessage("Please enter an \"at word\" and a hex color\nEx. @work as #FF3333");
+		}
+	},
+	parseParams: function(params, mods){
+		var response = {};
+		var paramsS = params.text;
+		var atWord = paramsS.replace(/^@/, '');
+		if (atWord == ''){
+			atWord = null;
+		}
+		response.atWord = atWord;
+		var color = mods['as'].text;
+		if (/^#\w{3,6}$/i.test(color)){
+			response.color = color;
+		} else if (/^\w{3,6}$/i.test(color)){
+			response.color = '#' + color;
+		} else {
+			response.color = null;
+		}
+		CmdUtils.log("atWord: " + atWord + " color: " + response.color);
+		return response;
+	}
+});
+// END todo-color
+///////////////////////////////////////
 
 /*
 JSONstring v 1.01
