@@ -24,10 +24,11 @@ CmdUtils.CreateCommand({
 	description: "",
 	help: "<dl>\
 <dt style='font-style:italic; border-bottom: solid 1px #cccccc;'>todo</dt><dd>displays your list of todo items</dd> \
-<dt style='font-style:italic; border-bottom: solid 1px #cccccc;'>todo add &lt;message&gt;<dd>adds an item to your todo list</dd> \
-<dt style='font-style:italic; border-bottom: solid 1px #cccccc;'>todo finish OR done &lt;item number&gt;</dt><dd>removes the item with the corresponding number from your list.</dd> \
+<dt style='font-style:italic; border-bottom: solid 1px #cccccc;'>todo add &lt;message&gt;<dd>adds an item to your todo list.<br />Example: todo @home pick up groceries.</dd> \
+<dt style='font-style:italic; border-bottom: solid 1px #cccccc;'>todo finish OR done &lt;item number&gt;</dt> \
+	<dd>removes the item with the corresponding number from your list.<br />Example: todo finish 4</dd> \
 <dt style='font-style:italic; border-bottom: solid 1px #cccccc;'>todo set &lt;at word&gt; &lt;color&gt;</dt> \
-	<dd>Set the highlight color for a specific at word. <nobr>Example: set @work #ff3333</nobr></dd> \
+	<dd>Set the highlight color for a specific at word. <nobr>Example: todo set @work #ff3333</nobr><br />Check out the <a style='color:#9999FF;' href='http://www.visibone.com/colorlab/'>Visibone Color Lab</a> for colors.</dd> \
 </dl>",
 	takes: {"(add OR finish) message OR item number": noun_arb_text},
 	preview: function( pblock, input ) {
@@ -324,4 +325,5 @@ JSONstring={
 		}
 	}
 };
+
 
